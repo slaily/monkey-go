@@ -9,7 +9,7 @@ import (
 
 func TestLetStatements(t *testing.T) {
 	input := `
-let x= 5;
+let x = 5;
 let y = 10;
 let foobar = 838383;
 `
@@ -22,6 +22,7 @@ let foobar = 838383;
 	if len(program.Statements) != 3 {
 		t.Fatalf("program.Statements does not contain 3 statements. got=%d", len(program.Statements))
 	}
+	checkParserErrors(t, p)
 	tests := []struct {
 		expectedIdentifier string
 	}{
@@ -57,4 +58,17 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 		return false
 	}
 	return true
+}
+
+func checkParserErrors(t *testing.T, p *Parser) {
+	errors := p.Errors()
+	if len(errors) == 0 {
+		return
+	}
+
+	t.Errorf("parser has %d errors", len(errors))
+	for _, msg := range errors {
+		t.Errorf("parser error: %q", msg)
+	}
+	t.FailNow()
 }
